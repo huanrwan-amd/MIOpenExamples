@@ -8,9 +8,9 @@ int main(int argc, char *argv[]) {
 
   Tensor input(16, 128, 16,
                16); // batch size = 16, input channels = 3, image size = 16 x 16
-  Tensor output;
+  Tensor output(1, 1, 1, 1); // initialize to 1 x 1 x 1 x 1
   Tensor weights(1, 128, 3, 3); // kernel size = 3 x 3
-  Tensor bias;
+  Tensor bias(1, 1, 1, 1); // initialize to 1 x 1 x 1 x 1
   miopenConvolutionDescriptor_t conv_desc;
 
   // initialize tensor
@@ -27,6 +27,9 @@ int main(int argc, char *argv[]) {
   miopenCreateConvolutionDescriptor(&conv_desc);
   miopenInitConvolutionDescriptor(conv_desc, miopenConvolution, 0, 0, 1, 1, 1,
                                   1);
+  int groups = 2;
+  miopenSetConvolutionGroupCount(conv_desc, groups);
+
   // Get the convolution output dimensions
   int n, c, h, w;
   miopenGetConvolutionForwardOutputDim(conv_desc, input.desc, weights.desc, &n,
